@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+</head>
+<body>
+<div id="chat"></div>
+<div>
+    <label for="username">请输入目标用户名：</label>
+    <input type="text" id = "username" placeholder="用户名"/>
+    <label for="content">请输入聊天内容</label>
+    <input type="text" id="content" placeholder="聊天内容"/>
+</div>
+
+<input type="button" value="发送" id="send"/>
+
+<script>
+    let token = "token" + new Date().getTime();
+    console.log(token)
+    $('#userToken').append(token)
+    WebSocketTest()
+    function WebSocketTest()
+    {
+        if ("WebSocket" in window)
+        {
+            console.log("您的浏览器支持 WebSocket!");
+
+            // 打开一个 web socket
+            let ws = new WebSocket("ws://localhost:8089/myWebSocketDemo" );
+
+            ws.onopen = function()
+            {
+                // Web Socket 已连接上，使用 send() 方法发送数据
+                //             ws.send("发送数据");
+                console.log("与服务器建立连接成功！")
+
+            };
+
+            ws.onmessage = function (evt)
+            {
+                let received_msg = evt.data;
+                console.log("接收数据：" + received_msg)
+                $('#messageArea').append(received_msg + `<br/>`);
+            };
+
+            ws.onclose = function()
+            {
+                // 关闭 websocket
+                alert("连接已关闭...");
+            };
+        }
+
+        else
+        {
+            // 浏览器不支持 WebSocket
+            alert("您的浏览器不支持 WebSocket!");
+        }
+    }
+    let messageBody = $("#messageBody")
+    let aimId = $("#token")
+    function sendMessage(){
+        let toToken = aimId.val()
+        let message = messageBody.val()
+        if (toToken == null || toToken === '') {
+            toToken = token
+            message = token + message
+        }
+        let url = "http://localhost:8089/message/" + toToken + "/" + message;
+        messageBody.val("")
+
+        $.get(url)
+
+    }
+</script>
+</body>
+</html>

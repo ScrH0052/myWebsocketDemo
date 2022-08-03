@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+</head>
+<body>
+<div id="chat"></div>
+<div>
+    <label for="username">请输入目标用户名：</label>
+    <input type="text" id = "username" placeholder="用户名"/>
+    <label for="content">请输入聊天内容</label>
+    <input type="text" id="content" placeholder="聊天内容"/>
+</div>
+
+<input type="button" value="发送" id="send"/>
+
+<script>
+    var stompClient;
+    $(function () {
+        connect();
+        //发送消息到后台
+        $("#send").click(function () {
+            stompClient.send("/app/onlineChat",{},JSON.stringify({'to':$('#username').val(),'content':$("#content").val()}))
+        })
+    })
+
+    function connect() {
+        //获取连接地址
+        var socketjs = new SockJS("/stompWebSocket");
+        stompClient = Stomp.over(socketjs);
+        //建立连接
+        stompClient.connect({},function (frame) {
+            //订阅消息
+            stompClient.subscribe("/user/testChannel/aaa",function (obj) {
+                var msg = JSON.parse(obj.body);
+                $("#chat").append("<div>"+ "来自"+msg.from+"的消息“"+msg.content+"”"+"</div>")
+            })
+            stompClient.subscribe("/queue/chat",function (obj) {
+                var msg = JSON.parse(obj.body);
+                $("#chat").append("<div>"+ "来自"+msg.from+"的消息“"+msg.content+"”"+"</div>")
+            })
+        })
+    }
+</script>
+</body>
+</html>
