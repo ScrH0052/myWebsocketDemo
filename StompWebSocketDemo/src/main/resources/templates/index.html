@@ -34,14 +34,15 @@
         stompClient = Stomp.over(socketjs);
         //建立连接
         stompClient.connect({},function (frame) {
-            //订阅消息
+            //订阅消息(来自用户对用户的消息)
             stompClient.subscribe("/user/testChannel/aaa",function (obj) {
                 var msg = JSON.parse(obj.body);
                 $("#chat").append("<div>"+ "来自"+msg.from+"的消息“"+msg.content+"”"+"</div>")
             })
+            // 订阅频道消息
             stompClient.subscribe("/queue/chat",function (obj) {
                 var msg = JSON.parse(obj.body);
-                $("#chat").append("<div>"+ "来自"+msg.from+"的消息“"+msg.content+"”"+"</div>")
+                $("#chat").append("<div>"+ "来自频道"+msg.from+"的消息“"+msg.content+"”"+"</div>")
             })
         })
     }

@@ -51,6 +51,7 @@ public class TestController {
     @GetMapping("/test")
     @ResponseBody
     public void testSendMessage() {
-        simpMessagingTemplate.convertAndSendToUser("admin", "/testChannel", new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()));
+        simpMessagingTemplate.convertAndSendToUser("admin", "/testChannel",
+                new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()));
     }
 }

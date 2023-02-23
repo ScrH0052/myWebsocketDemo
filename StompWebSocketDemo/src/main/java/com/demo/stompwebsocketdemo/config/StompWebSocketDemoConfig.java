@@ -21,7 +21,7 @@ public class StompWebSocketDemoConfig implements WebSocketMessageBrokerConfigure
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic","/queue");
+        registry.enableSimpleBroker("/topic","/queue","/testChannel");
         registry.setApplicationDestinationPrefixes("/app");
     }
 
